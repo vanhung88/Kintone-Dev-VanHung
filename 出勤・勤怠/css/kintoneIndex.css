@@ -1,0 +1,39 @@
+#check-in-home,
+#check-in-office {
+  padding: 13px 40px;
+  background-color: #57bbcd;
+  border: none;
+  border-radius: 3px;
+  transition: 0.2s;
+  margin-right: 25px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+#check-in-home:hover,
+#check-in-office:hover {
+  background-color: #4f9caa;
+}
+#check-out {
+  padding: 13px 40px;
+  background-color: #d75d8bd6;
+  border: none;
+  transition: 0.2s;
+  border-radius: 3px;
+  transition: 0.2s;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+#check-out:hover {
+  background-color: #e4598d;
+}
+
+@media screen and (max-width: 1077px) {
+  #check-in-home,
+  #check-in-office,
+  #check-out {
+    margin-top: 15px;
+  }
+}
+
+/* mobile */
+.gaia-mobile-v2-app-index-navigationbar-bodyselector-viewselectbutton {
+  display: contents !important;
+}
