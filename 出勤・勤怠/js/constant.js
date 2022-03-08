@@ -20,7 +20,7 @@ const create_button = (tableListE, userLogin, dateNow) => {
     CheckInAtOffice.id = 'check-in-office';
     CheckOutButton.id = 'check-out';
 
-    CheckInAtHome.innerHTML = '出勤';
+    CheckInAtHome.innerHTML = '在宅出勤';
     CheckInAtOffice.innerHTML = '出社';
     CheckOutButton.innerHTML = '退勤';
 
@@ -32,14 +32,16 @@ const create_button = (tableListE, userLogin, dateNow) => {
       }
     };
     CheckInAtOffice.onclick = () => {
-      const check = confirm('Do you want check in');
+      const check = confirm('Do you want check in !');
       const updateType = '出社';
       if (check) {
         handleCheckIn(tableListE, userLogin, dateNow, updateType);
       }
     };
     CheckOutButton.onclick = () => {
-      const check = confirm('Do you want check out');
+      const check = confirm(
+        'Do you want check out ! ( You have to check in before check out)'
+      );
       const updateType = '退勤';
       if (check) {
         handleCheckOut(tableListE, userLogin, dateNow, updateType);
@@ -137,7 +139,6 @@ const handleCheckIn = (tableListE, userLogin, dateNow, updateType) => {
     ) {
       recordNumber =
         e.querySelector('.recordlist-record_id-gaia')?.textContent * 1; // get stt record
-      console.log(recordNumber);
       isRecordCheckIn = true;
       if (e?.querySelectorAll('.recordlist-time-gaia')[0]?.textContent === '') {
         updateTime(recordNumber, time, 'time_check_in', updateType);
@@ -191,6 +192,7 @@ const handleCheckOut = (tableListE, userLogin, dateNow, updateType) => {
   const { time } = useGetDate(new Date(Date.now()).getTime());
   let isCheckOut = 0;
   let recordNumber;
+  let emptyCheckIn = false;
 
   for (let e of tableListE) {
     if (
@@ -199,42 +201,23 @@ const handleCheckOut = (tableListE, userLogin, dateNow, updateType) => {
         ?.querySelectorAll('.recordlist-date-gaia')[0]
         ?.textContent?.slice(0, 6) === dateNow &&
       // kiểm tra người check in có phải mình không
-      e?.querySelector('.recordlist-username-gaia')?.textContent ===
-        userLogin &&
-      //kiểm tra đã checkin chưa , checkin rồi thì mới cho checkout
-      e.querySelectorAll('.recordlist-time-gaia')[0]?.textContent !== ''
+      e?.querySelector('.recordlist-username-gaia')?.textContent === userLogin
     ) {
       recordNumber =
         e.querySelector('.recordlist-record_id-gaia')?.textContent * 1;
-      if (e.querySelectorAll('.recordlist-time-gaia')[1]?.textContent === '') {
-        updateTime(recordNumber, time, 'time_check_out', updateType);
-        isCheckOut++;
-      }
+      if (e.querySelectorAll('.recordlist-time-gaia')[0]?.textContent !== '') {
+        if (
+          e.querySelectorAll('.recordlist-time-gaia')[1]?.textContent === ''
+        ) {
+          updateTime(recordNumber, time, 'time_check_out', updateType);
+          isCheckOut++;
+        }
+      } else emptyCheckIn = true;
     }
   }
-  if (isCheckOut === 0) {
+  if (isCheckOut === 0 && emptyCheckIn === false) {
     alert(' 本日に勤怠を実施しました。');
   }
-  // } else {
-  //     const update = {
-  //         'app': 198,
-  //         'id': recordNumber,
-  //         'record': {
-  //             'time_check_out': {
-  //                 'value': time
-  //             },
-  //             'Type': {
-  //                 'value': updateType
-  //             }
-  //         }
-  //     };
-
-  //     kintone.api(kintone.api.url('/k/v1/record', true), 'PUT', update, function(resp) {
-  //         location.reload();
-  //     }, function(error) {
-  //         console.log(error);
-  //     })
-  // }
 };
 
 const handleViewList = (tableListE, userLogin, dateNow) => {

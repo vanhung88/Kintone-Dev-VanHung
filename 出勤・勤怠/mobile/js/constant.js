@@ -42,7 +42,9 @@ const create_button = (tableListE, userLogin, dateNow) => {
       }
     };
     CheckOutButton.onclick = () => {
-      const check = confirm('Do you want check out');
+      const check = confirm(
+        'Do you want check out ! ( You have to check in before check out)'
+      );
       const updateType = '退勤';
       if (check) {
         handleCheckOut(tableListE, userLogin, dateNow, updateType);
@@ -141,25 +143,26 @@ const handleCheckIn = (tableListE, userLogin, dateNow, updateType) => {
     ) {
       recordNumber =
         e.querySelectorAll('.gaia-mobile-v2-app-index-recordlist-table-cell')[1]
-          ?.textContent * 1; // get stt record
+          ?.textContent * 1; // get record number
+      console.log(recordNumber);
+      isRecordCheckIn = true;
       if (
         e?.querySelectorAll(
           '.gaia-mobile-v2-app-index-recordlist-table-cell'
-        )[3]?.textContent === ''
+        )[3]?.textContent === ' '
       ) {
         updateTime(recordNumber, time, 'time_check_in', updateType);
-        allCheckIn++; // update status đã check in
+        allCheckIn++; // update status checked in
       }
-      isRecordCheckIn = true;
     }
   });
 
-  // đã check in ngày hôm đó , update time check in
+  //case: have checked in on date now => exist function
   if (allCheckIn > 0) {
     return;
   }
 
-  // chưa check in
+  // case: is'not check in
   if (isRecordCheckIn) {
     alert('本日に出勤を実施しました。');
   } else {
@@ -199,6 +202,7 @@ const handleCheckOut = (tableListE, userLogin, dateNow, updateType) => {
   const { time } = useGetDate(new Date(Date.now()).getTime());
   let isCheckOut = 0;
   let recordNumber;
+  let emptyCheckIn = false;
 
   for (let e of tableListE) {
     if (
@@ -208,24 +212,27 @@ const handleCheckOut = (tableListE, userLogin, dateNow, updateType) => {
         ?.textContent?.slice(0, 6) === dateNow &&
       // kiểm tra người check in có phải mình không
       e?.querySelectorAll('.gaia-mobile-v2-app-index-recordlist-table-cell')[5]
-        ?.textContent === userLogin &&
-      // kiểm tra đã checkin chưa
-      e.querySelectorAll('.gaia-mobile-v2-app-index-recordlist-table-cell')[3]
-        ?.textContent !== ''
+        ?.textContent === userLogin
     ) {
       recordNumber =
         e.querySelectorAll('.gaia-mobile-v2-app-index-recordlist-table-cell')[1]
           ?.textContent * 1;
       if (
-        e.querySelectorAll('.gaia-mobile-v2-app-index-recordlist-table-cell')[4]
-          ?.textContent === ' '
+        e.querySelectorAll('.gaia-mobile-v2-app-index-recordlist-table-cell')[3]
+          ?.textContent !== ' '
       ) {
-        updateTime(recordNumber, time, 'time_check_out', updateType);
-        isCheckOut++;
-      }
+        if (
+          e.querySelectorAll(
+            '.gaia-mobile-v2-app-index-recordlist-table-cell'
+          )[4]?.textContent === ' '
+        ) {
+          updateTime(recordNumber, time, 'time_check_out', updateType);
+          isCheckOut++;
+        }
+      } else emptyCheckIn = true;
     }
   }
-  if (isCheckOut === 0) {
+  if (isCheckOut === 0 && emptyCheckIn === false) {
     alert(' 本日に勤怠を実施しました。');
   } else {
     const update = {
