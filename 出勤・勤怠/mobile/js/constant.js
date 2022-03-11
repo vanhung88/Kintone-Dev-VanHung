@@ -3,6 +3,34 @@ const disable_field = (record, fields) => {
     record[field].disabled = true;
   }
 };
+const body = {
+  app: 198,
+  query: 'Created_by in (LOGINUSER())',
+  fields: [
+    '$id',
+    'user_login',
+    'Created_by',
+    'Created_datetime',
+    'time_check_in',
+    'time_check_out',
+    'working_date',
+  ],
+};
+
+const getListRecord = new Promise((resolve, reject) => {
+  kintone.api(
+    kintone.api.url('/k/v1/records', true),
+    'GET',
+    body,
+    function (resp) {
+      resolve(resp.records);
+    },
+    function (error) {
+      reject();
+      console.log(error);
+    }
+  );
+});
 
 const field_shown = (field, status) => {
   kintone.app.record.setFieldShown(field, status);
@@ -31,23 +59,21 @@ const create_button = (tableListE, userLogin, dateNow) => {
       const check = confirm('Do you want check in');
       const updateType = '出勤';
       if (check) {
-        handleCheckIn(tableListE, userLogin, dateNow, updateType);
+        handleCheckIn2(updateType);
       }
     };
     CheckInAtOffice.onclick = () => {
       const check = confirm('Do you want check in');
       const updateType = '出社';
       if (check) {
-        handleCheckIn(tableListE, userLogin, dateNow, updateType);
+        handleCheckIn2(updateType);
       }
     };
     CheckOutButton.onclick = () => {
-      const check = confirm(
-        'Do you want check out ! ( You have to check in before check out)'
-      );
+      const check = confirm('Do you want check out');
       const updateType = '退勤';
       if (check) {
-        handleCheckOut(tableListE, userLogin, dateNow, updateType);
+        handleCheckOut2(updateType);
       }
     };
     headerSpace.appendChild(CheckInAtHome);
@@ -125,158 +151,115 @@ const updateTime = (recordNumber, time, field, updateType) => {
   );
 };
 
-// handle button check in
-const handleCheckIn = (tableListE, userLogin, dateNow, updateType) => {
-  const { date, time } = useGetDate(new Date(Date.now()).getTime());
-  let allCheckIn = 0;
-  let isRecordCheckIn = false;
-  let recordNumber;
+handleCheckIn2 = (updateType) => {
+  let isCheckIn = false;
+  let updateTimeCheckIn = false;
 
-  for (let i = 0; i < tableListE.length; i++) {
-    if (
-      // kiểm tra hôm nay đã check in chưa
-      tableListE[i]
-        ?.querySelectorAll('.gaia-mobile-v2-app-index-recordlist-table-cell')[2]
-        ?.textContent?.slice(0, 6) === dateNow &&
-      // kiểm tra người check in có phải mình không
-      tableListE[i]?.querySelectorAll(
-        '.gaia-mobile-v2-app-index-recordlist-table-cell'
-      )[5]?.textContent === userLogin
-    ) {
-      recordNumber =
-        tableListE[i].querySelectorAll(
-          '.gaia-mobile-v2-app-index-recordlist-table-cell'
-        )[1]?.textContent * 1; // get record number
-      isRecordCheckIn = true;
-      if (
-        tableListE[i]?.querySelectorAll(
-          '.gaia-mobile-v2-app-index-recordlist-table-cell'
-        )[3]?.textContent === ' '
-      ) {
-        updateTime(recordNumber, time, 'time_check_in', updateType);
-        allCheckIn++; // update status checked in
-        break;
-      }
-      break;
-    }
-  }
-
-  //case: have checked in on date now => exist function
-  if (allCheckIn > 0) {
-    return;
-  }
-
-  // case: is'not check in
-  if (isRecordCheckIn) {
-    alert('本日に出勤を実施しました。');
-  } else {
-    const create = {
-      app: 198,
-      records: [
-        {
-          working_date: {
-            value: date, // year/,month/day
-          },
-          time_check_in: {
-            value: time, // hour:minute
-          },
-          Type: {
-            value: updateType, // dropdown value
-          },
-        },
-      ],
-    };
-
-    kintone.api(
-      kintone.api.url('/k/v1/records', true),
-      'POST',
-      create,
-      function (resp) {
-        location.reload();
-      },
-      function (error) {
-        console.log(error);
-      }
-    );
-  }
-};
-
-// handle button check out
-const handleCheckOut = (tableListE, userLogin, dateNow, updateType) => {
-  const { time } = useGetDate(new Date(Date.now()).getTime());
-  let isCheckOut = 0;
-  let recordNumber;
-  let emptyCheckIn = false;
-
-  for (let e of tableListE) {
-    if (
-      // kiểm tra hôm nay đã check in chưa
-      e
-        ?.querySelectorAll('.gaia-mobile-v2-app-index-recordlist-table-cell')[2]
-        ?.textContent?.slice(0, 6) === dateNow &&
-      // kiểm tra người check in có phải mình không
-      e?.querySelectorAll('.gaia-mobile-v2-app-index-recordlist-table-cell')[5]
-        ?.textContent === userLogin
-    ) {
-      recordNumber =
-        e.querySelectorAll('.gaia-mobile-v2-app-index-recordlist-table-cell')[1]
-          ?.textContent * 1;
-      if (
-        e.querySelectorAll('.gaia-mobile-v2-app-index-recordlist-table-cell')[3]
-          ?.textContent !== ' '
-      ) {
-        if (
-          e.querySelectorAll(
-            '.gaia-mobile-v2-app-index-recordlist-table-cell'
-          )[4]?.textContent === ' '
-        ) {
-          updateTime(recordNumber, time, 'time_check_out', updateType);
-          isCheckOut++;
+  kintone.api(
+    kintone.api.url('/k/v1/records', true),
+    'GET',
+    body,
+    function (resp) {
+      const { date, time } = useGetDate(new Date(Date.now()).getTime());
+      for (const e of resp.records) {
+        if (e?.working_date?.value === date) {
+          if (e?.time_check_in?.value === null) {
+            updateTimeCheckIn = true;
+            updateTime(e.$id.value, time, 'time_check_in', updateType);
+            break;
+          } else isCheckIn = true;
           break;
         }
-      } else emptyCheckIn = true;
-      break;
-    }
-  }
-  if (isCheckOut === 0 && emptyCheckIn === false) {
-    alert(' 本日に勤怠を実施しました。');
-  } else {
-    const update = {
-      app: 198,
-      id: recordNumber,
-      record: {
-        time_check_out: {
-          value: time,
-        },
-        Type: {
-          value: updateType,
-        },
-      },
-    };
-
-    kintone.api(
-      kintone.api.url('/k/v1/record', true),
-      'PUT',
-      update,
-      function (resp) {
-        location.reload();
-      },
-      function (error) {
-        console.log(error);
       }
-    );
-  }
+
+      if (updateTimeCheckIn) return;
+      // chưa check in
+      if (isCheckIn) {
+        alert('本日に出勤を実施しました。');
+      } else {
+        const create = {
+          app: 198,
+          records: [
+            {
+              working_date: {
+                value: date, // year/,month/day
+              },
+              time_check_in: {
+                value: time, // hour:minute
+              },
+              Type: {
+                value: updateType, // dropdown value
+              },
+            },
+          ],
+        };
+
+        kintone.api(
+          kintone.api.url('/k/v1/records', true),
+          'POST',
+          create,
+          function (resp) {
+            location.reload();
+          },
+          function (error) {
+            console.log(error);
+          }
+        );
+      }
+    },
+    function (error) {
+      console.log(error);
+    }
+  );
 };
 
-const handleViewList = (tableListE, userLogin, dateNow) => {
-  tableListE.forEach((e) => {
-    if (
-      e
-        ?.querySelectorAll('.gaia-mobile-v2-app-index-recordlist-table-cell')[2]
-        ?.textContent?.slice(0, 6) !== dateNow
-    ) {
-      e.style.display = 'none';
+handleCheckOut2 = (updateType) => {
+  let isCheckOut = false;
+  let updateTimeCheckOut = false;
+
+  kintone.api(
+    kintone.api.url('/k/v1/records', true),
+    'GET',
+    body,
+    function (resp) {
+      const { date, time } = useGetDate(new Date(Date.now()).getTime());
+      for (const value of resp.records) {
+        if (value?.working_date?.value === date) {
+          isCheckOut = true;
+          if (value?.time_check_out?.value === null) {
+            if (value?.time_check_in?.value !== null) {
+              updateTimeCheckOut = true;
+              updateTime(value?.$id?.value, time, 'time_check_out', updateType);
+            } else {
+              alert('You have to check in before check out');
+              return;
+            }
+          }
+          break;
+        }
+      }
+
+      if (updateTimeCheckOut) return;
+      // chưa check in
+      if (isCheckOut) {
+        alert(' 本日に勤怠を実施しました。');
+      }
+    },
+    function (error) {
+      console.log(error);
     }
+  );
+};
+
+const handleViewList = (tableListE, userLogin) => {
+  if (
+    document.querySelector(
+      '.gaia-mobile-v2-app-index-navigationbar-bodyselector-viewselectbutton'
+    ).textContent !== '勤務日'
+  ) {
+    document.querySelector('tbody').style.display = 'none';
+  }
+  tableListE.forEach((e) => {
     if (
       e?.querySelectorAll('.gaia-mobile-v2-app-index-recordlist-table-cell')[5]
         ?.innerText !== userLogin

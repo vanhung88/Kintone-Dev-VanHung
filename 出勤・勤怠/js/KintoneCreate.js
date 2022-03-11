@@ -9,7 +9,7 @@
     const Type = record.Type.value;
     const masterAppId = 198; // App ID of a different app
     const query = 'working_date="' + workingDateValue + '"';
-    const { date } = useGetDate(new Date(Date.now()).getTime());
+    // const { date } = useGetDate(new Date(Date.now()).getTime());
     const body = {
       app: 198,
       query: 'Created_by in (LOGINUSER())',
