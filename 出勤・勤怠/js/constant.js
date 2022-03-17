@@ -247,20 +247,3 @@ handleCheckOut2 = (updateType) => {
     }
   );
 };
-
-const handleViewList = (tableListE, userLogin) => {
-  if (document.querySelector('.gaia-argoui-select').innerText !== '勤務日') {
-    document.querySelector('tbody').style.display = 'none';
-  }
-  tableListE.forEach((e) => {
-    if (
-      e?.querySelector('.recordlist-username-gaia')?.textContent !== userLogin
-    ) {
-      for (let i = 0; i < 2; i++) {
-        e
-          .querySelectorAll('.recordlist-time-gaia')
-          [i].querySelector('span').style.display = 'none';
-      }
-    }
-  });
-};
