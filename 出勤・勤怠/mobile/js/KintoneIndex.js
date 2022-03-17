@@ -8,10 +8,16 @@
       '.gaia-mobile-v2-app-index-recordlist-table-bodyrow'
     );
     const userLogin = kintone.getLoginUser().name;
-    document.querySelector(
-      '.gaia-mobile-v2-app-index-recordlist-table-headercell-label'
-    ).textContent = 'レコード番号';
-    handleViewList(tableListE, userLogin);
+
+    if (
+      document.querySelector(
+        '.gaia-mobile-v2-app-index-navigationbar-bodyselector-viewselectbutton'
+      ).textContent !== '勤務日'
+    ) {
+      document.querySelector(
+        '.gaia-mobile-v2-app-index-recordlist-table-headercell-label'
+      ).textContent = 'レコード番号';
+    }
     create_button();
   });
 })();

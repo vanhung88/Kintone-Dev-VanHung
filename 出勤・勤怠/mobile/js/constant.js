@@ -250,27 +250,3 @@ handleCheckOut2 = (updateType) => {
     }
   );
 };
-
-const handleViewList = (tableListE, userLogin) => {
-  if (
-    document.querySelector(
-      '.gaia-mobile-v2-app-index-navigationbar-bodyselector-viewselectbutton'
-    ).textContent !== '勤務日'
-  ) {
-    document.querySelector('tbody').style.display = 'none';
-  }
-  tableListE.forEach((e) => {
-    if (
-      e?.querySelectorAll('.gaia-mobile-v2-app-index-recordlist-table-cell')[5]
-        ?.innerText !== userLogin
-    ) {
-      for (let i = 3; i < 5; i++) {
-        e
-          .querySelectorAll('.gaia-mobile-v2-app-index-recordlist-table-cell')
-          [i].querySelector(
-            '.gaia-mobile-v2-app-index-recordlist-table-textcellvalue'
-          ).style.display = 'none';
-      }
-    }
-  });
-};
