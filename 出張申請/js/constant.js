@@ -1,6 +1,7 @@
 function field_shown(field, status) {
   kintone.app.record.setFieldShown(field, status);
 }
+
 function hide_name_field(className, text) {
   const field_name = document.querySelectorAll(`.${className}`);
   field_name.forEach((element) => {
@@ -9,6 +10,49 @@ function hide_name_field(className, text) {
     }
   });
 }
+
+const autoFillV2 = (record) => {
+  const table1 = record.table1.value;
+  const result = [];
+  // const formValue3 = {record.table3.value[0]; // {id.value}}
+  const formValue3 = {
+    id: null,
+    value: {
+      AmountOfMoney2: { type: 'NUMBER', value: undefined },
+      Date3: { type: '"DATE"', value: undefined },
+      Supplement2: { type: '"SINGLE_LINE_TEXT"', value: undefined },
+      Text_15: { type: 'SINGLE_LINE_TEXT', value: undefined },
+      TransportationFacilities2: { type: '"DROP_DOWN"', value: undefined },
+      UseSectionFrom2: { type: '"SINGLE_LINE_TEXT"', value: undefined },
+      UseSectionTo2: { type: '"SINGLE_LINE_TEXT"', value: undefined },
+    },
+  };
+
+  for (const e of table1) {
+    const newForm = {
+      id: null,
+      value: {
+        AmountOfMoney2: { type: 'NUMBER', value: undefined },
+        Date3: { type: '"DATE"', value: undefined },
+        Supplement2: { type: '"SINGLE_LINE_TEXT"', value: undefined },
+        Text_15: { type: 'SINGLE_LINE_TEXT', value: undefined },
+        TransportationFacilities2: { type: '"DROP_DOWN"', value: undefined },
+        UseSectionFrom2: {
+          type: '"SINGLE_LINE_TEXT"',
+          value: e.value.UseSectionFrom.value,
+        },
+        UseSectionTo2: { type: '"SINGLE_LINE_TEXT"', value: undefined },
+      },
+    };
+    result.push(newForm);
+  }
+  console.log('uo uo');
+  console.log(result);
+  // for (const e of result) {
+  //   record.table3.value.push(e);
+  // }
+};
+
 const useGetDate = (id) => {
   let unix_timestamp = Number(id);
 

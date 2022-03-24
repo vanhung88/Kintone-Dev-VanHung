@@ -10,8 +10,8 @@
   ];
   kintone.events.on(eventsSubmit, function (e) {
     const record = e.record;
-    console.log('EDIT');
     autoFill(record);
+     hide_name_field('subtable-label-inner-gaia', 'hide')
     handleViewTable3(record);
   });
 })();

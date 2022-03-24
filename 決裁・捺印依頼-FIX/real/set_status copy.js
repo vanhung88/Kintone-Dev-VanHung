@@ -117,7 +117,7 @@
       return event;
     }
 
-    // 一次承認した時のアクション
+    // 一次承認した時のアクション handle status 6
     if (nStatus == '決裁申請中') {
       record.一次承認実行者.value = [{ code: user.code, name: user.name }];
       record.一次承認実行日.value = moment(datetime).toISOString();
@@ -161,6 +161,7 @@
     if (nStatus == '押印作業中') {
       record.決裁承認実行者.value = [{ code: user.code, name: user.name }];
       record.決裁承認実行日.value = moment(datetime).toISOString();
+
       if (setApprovalDocument(record.決裁捺印依頼書.value.length) === true) {
         event.error = '決裁・捺印依頼書を添付することができません。';
       }
