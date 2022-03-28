@@ -6,6 +6,11 @@
     const record = e.record;
     const tableListE = document.querySelectorAll('.recordlist-row-gaia');
     const userLogin = kintone.getLoginUser().name;
+    console.log('CHECK');
+
+    // none all record
+
+    // change text record number
     if (document.querySelector('.gaia-argoui-select').innerText !== '勤務日') {
       document
         .querySelector('thead')

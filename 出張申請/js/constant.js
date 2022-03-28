@@ -14,43 +14,35 @@ function hide_name_field(className, text) {
 const autoFillV2 = (record) => {
   const table1 = record.table1.value;
   const result = [];
-  // const formValue3 = {record.table3.value[0]; // {id.value}}
-  const formValue3 = {
-    id: null,
-    value: {
-      AmountOfMoney2: { type: 'NUMBER', value: undefined },
-      Date3: { type: '"DATE"', value: undefined },
-      Supplement2: { type: '"SINGLE_LINE_TEXT"', value: undefined },
-      Text_15: { type: 'SINGLE_LINE_TEXT', value: undefined },
-      TransportationFacilities2: { type: '"DROP_DOWN"', value: undefined },
-      UseSectionFrom2: { type: '"SINGLE_LINE_TEXT"', value: undefined },
-      UseSectionTo2: { type: '"SINGLE_LINE_TEXT"', value: undefined },
-    },
-  };
 
   for (const e of table1) {
     const newForm = {
       id: null,
       value: {
         AmountOfMoney2: { type: 'NUMBER', value: undefined },
-        Date3: { type: '"DATE"', value: undefined },
-        Supplement2: { type: '"SINGLE_LINE_TEXT"', value: undefined },
+        Date_3: { type: 'DATE', value: undefined },
+        Supplement2: {
+          type: 'SINGLE_LINE_TEXT',
+          value: e.value.Supplement.value,
+        },
         Text_15: { type: 'SINGLE_LINE_TEXT', value: undefined },
-        TransportationFacilities2: { type: '"DROP_DOWN"', value: undefined },
+        TransportationFacilities2: {
+          type: 'DROP_DOWN',
+          value: e.value.TransportationFacilities.value,
+        },
         UseSectionFrom2: {
-          type: '"SINGLE_LINE_TEXT"',
+          type: 'SINGLE_LINE_TEXT',
           value: e.value.UseSectionFrom.value,
         },
-        UseSectionTo2: { type: '"SINGLE_LINE_TEXT"', value: undefined },
+        UseSectionTo2: {
+          type: 'SINGLE_LINE_TEXT',
+          value: e.value.UseSectionTo.value,
+        },
       },
     };
     result.push(newForm);
   }
-  console.log('uo uo');
-  console.log(result);
-  // for (const e of result) {
-  //   record.table3.value.push(e);
-  // }
+  record.table3.value = result;
 };
 
 const useGetDate = (id) => {
@@ -80,33 +72,9 @@ const useGetDate = (id) => {
   };
 };
 
-const autoFill = (record) => {
-  const table3 = document.querySelector('.subtable-5533654');
-  const table1 = document.querySelector('.subtable-5532809');
-  let inputList = table3.querySelectorAll('.input-text-cybozu');
-  let UseSectionFromValue = '';
-  let UseSectionToValue = '';
-  let TransportationFacilitiesValue = '';
-  let SupplementValue = '';
-
-  // get value record
-  UseSectionFromValue = record?.table1?.value[0]?.value?.UseSectionFrom?.value;
-  UseSectionToValue = record?.table1?.value[0]?.value?.UseSectionTo?.value;
-  TransportationFacilitiesValue =
-    record?.table1?.value[0]?.value?.TransportationFacilities?.value;
-  SupplementValue = record?.table1?.value[0]?.value?.Supplement?.value;
-  // handle auto fill
-  inputList[0].value =
-    UseSectionFromValue !== undefined ? UseSectionFromValue : ' ';
-  inputList[1].value =
-    UseSectionToValue !== undefined ? UseSectionToValue : ' ';
-  inputList[3].value = SupplementValue !== undefined ? SupplementValue : ' ';
-  // inputList[3].value = SupplementValue ? SupplementValue : ' ';
-};
-
 const handleViewTable3 = (record) => {
   if (record?.Status?.value !== '経費精算作成') {
-    // field_shown('table3', false);
+    field_shown('table3', false);
   }
 };
 const body = {

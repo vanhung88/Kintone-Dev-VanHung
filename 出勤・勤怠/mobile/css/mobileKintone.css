@@ -60,3 +60,6 @@
 .gaia-mobile-v2-app-index-navigationbar-bodyselector {
   padding: 15px 0 !important;
 }
+.gaia-mobile-v2-bottomsheet-menuitem [title='(All records)'] {
+  display: none !important;
+}

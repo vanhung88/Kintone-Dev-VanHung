@@ -37,3 +37,7 @@
 .gaia-mobile-v2-app-index-navigationbar-bodyselector-viewselectbutton {
   display: contents !important;
 }
+
+li.gaia-argoui-menuitem-parent [title='(All records)'] {
+  display: none !important;
+}

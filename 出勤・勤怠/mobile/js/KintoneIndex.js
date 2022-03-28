@@ -19,5 +19,13 @@
       ).textContent = 'レコード番号';
     }
     create_button();
+
+    // hide view al record
+    const recordOption = document.querySelectorAll('.menuitem-button');
+    recordOption.forEach((item) => {
+      if (item.textContent === '(All records)') {
+        document.querySelectorAll('.menuitem-button')[2].style.display = 'none';
+      }
+    });
   });
 })();
