@@ -1,3 +1,6 @@
+// NO APP ID
+const appId = 198;
+
 const disable_field = (record, fields) => {
   for (let field of fields) {
     record[field].disabled = true;
@@ -5,7 +8,7 @@ const disable_field = (record, fields) => {
 };
 
 const body = {
-  app: 198,
+  app: appId,
   query: 'Created_by in (LOGINUSER())',
   fields: [
     '$id',
@@ -37,6 +40,12 @@ const field_shown = (field, status) => {
   kintone.app.record.setFieldShown(field, status);
 };
 
+function display_field(fieldName) {
+  for (const i of fieldName) {
+    kintone.app.record.setFieldShown(i, false);
+  }
+}
+
 const create_button = () => {
   if (document.getElementById('check-in-home') != null) {
     return;
@@ -49,27 +58,27 @@ const create_button = () => {
     CheckInAtOffice.id = 'check-in-office';
     CheckOutButton.id = 'check-out';
 
-    CheckInAtHome.innerHTML = '在宅出勤';
-    CheckInAtOffice.innerHTML = '出社';
-    CheckOutButton.innerHTML = '退勤';
+    CheckInAtHome.innerHTML = '始業（在宅）';
+    CheckInAtOffice.innerHTML = '始業（出社）';
+    CheckOutButton.innerHTML = '終業';
 
     CheckInAtHome.onclick = () => {
-      const check = confirm('Do you want check in');
-      const updateType = '在宅出勤';
+      const check = confirm('始業しますか？');
+      const updateType = '始業（在宅）';
       if (check) {
         handleCheckIn2(updateType);
       }
     };
     CheckInAtOffice.onclick = () => {
-      const check = confirm('Do you want check in !');
-      const updateType = '出社';
+      const check = confirm('始業しますか？');
+      const updateType = '始業（出社）';
       if (check) {
         handleCheckIn2(updateType);
       }
     };
     CheckOutButton.onclick = () => {
-      const check = confirm('Do you want check out');
-      const updateType = '退勤';
+      const check = confirm('終業しますか？');
+      const updateType = '終業';
       if (check) {
         handleCheckOut2(updateType);
       }
@@ -111,7 +120,7 @@ const updateTime = (recordNumber, time, field, updateType) => {
   let update;
   if (field === 'time_check_in') {
     update = {
-      app: 198,
+      app: appId,
       id: recordNumber,
       record: {
         time_check_in: {
@@ -124,7 +133,7 @@ const updateTime = (recordNumber, time, field, updateType) => {
     };
   } else {
     update = {
-      app: 198,
+      app: appId,
       id: recordNumber,
       record: {
         time_check_out: {
@@ -171,12 +180,15 @@ handleCheckIn2 = (updateType) => {
       }
 
       if (updateTimeCheckIn) return;
-      // chưa check in
+
+      // already checkIn
       if (isCheckIn) {
-        alert('本日に出勤を実施しました。');
+        alert(
+          'すでに出勤時刻を入力しております。レコード詳細から時刻を修正してください'
+        );
       } else {
         const create = {
-          app: 198,
+          app: appId,
           records: [
             {
               working_date: {
@@ -238,9 +250,12 @@ handleCheckOut2 = (updateType) => {
       }
 
       if (updateTimeCheckOut) return;
-      // chưa check in
+
+      // already checkIn
       if (isCheckOut) {
-        alert(' 本日に勤怠を実施しました。');
+        alert(
+          'すでに退勤時刻が入力しております。レコード詳細から時刻を修正してください'
+        );
       }
     },
     function (error) {

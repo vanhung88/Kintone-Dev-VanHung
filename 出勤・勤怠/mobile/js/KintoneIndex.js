@@ -9,15 +9,10 @@
     );
     const userLogin = kintone.getLoginUser().name;
 
-    if (
-      document.querySelector(
-        '.gaia-mobile-v2-app-index-navigationbar-bodyselector-viewselectbutton'
-      ).textContent !== '勤務日'
-    ) {
-      document.querySelector(
-        '.gaia-mobile-v2-app-index-recordlist-table-headercell-label'
-      ).textContent = 'レコード番号';
-    }
+    document.querySelector(
+      '.gaia-mobile-v2-app-index-recordlist-table-headercell-label'
+    ).textContent = '勤務タイプ';
+
     create_button();
 
     // hide view al record

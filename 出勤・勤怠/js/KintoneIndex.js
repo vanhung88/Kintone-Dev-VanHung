@@ -11,12 +11,10 @@
     // none all record
 
     // change text record number
-    if (document.querySelector('.gaia-argoui-select').innerText !== '勤務日') {
-      document
-        .querySelector('thead')
-        .querySelector('.recordlist-header-cell-inner-gaia').textContent =
-        'レコード番号';
-    }
+    document
+      .querySelector('thead')
+      .querySelector('.recordlist-header-cell-inner-gaia').textContent =
+      '勤務タイプ';
     create_button();
   });
 })();
