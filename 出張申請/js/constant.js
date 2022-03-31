@@ -1,6 +1,13 @@
+const appIdConnect = 198;
+
 function field_shown(field, status) {
   kintone.app.record.setFieldShown(field, status);
 }
+const disable_field = (record, fields) => {
+  for (let field of fields) {
+    record[field].disabled = true;
+  }
+};
 
 function hide_name_field(className, text) {
   const field_name = document.querySelectorAll(`.${className}`);
@@ -78,7 +85,7 @@ const handleViewTable3 = (record) => {
   }
 };
 const body = {
-  app: 198,
+  app: appIdConnect,
   query: 'Created_by in (LOGINUSER())',
   fields: ['$id', 'working_date'],
 };
@@ -100,7 +107,7 @@ const getListRecord = new Promise((resolve, reject) => {
 
 const createRecord = (date) => {
   const create = {
-    app: 198,
+    app: appIdConnect,
     records: [
       {
         working_date: {

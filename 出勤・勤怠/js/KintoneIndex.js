@@ -6,15 +6,7 @@
     const record = e.record;
     const tableListE = document.querySelectorAll('.recordlist-row-gaia');
     const userLogin = kintone.getLoginUser().name;
-    console.log('CHECK');
 
-    // none all record
-
-    // change text record number
-    document
-      .querySelector('thead')
-      .querySelector('.recordlist-header-cell-inner-gaia').textContent =
-      '勤務タイプ';
     create_button();
   });
 })();
