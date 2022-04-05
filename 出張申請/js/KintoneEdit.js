@@ -3,10 +3,6 @@
 
   const eventsSubmit = [
     'app.record.edit.show',
-    'app.record.edit.change.' + 'UseSectionFrom',
-    'app.record.edit.change.' + 'UseSectionTo',
-    'app.record.edit.change.' + 'TransportationFacilities',
-    'app.record.edit.change.' + 'Supplement',
   ];
   kintone.events.on(eventsSubmit, function (e) {
     const record = e.record;
@@ -16,8 +12,25 @@
     //出張申請
     if (record?.Status?.value !== '出張申請') {
       //Business trip information is disabled
-      console.log('DISIBAL');
-      // disable_field(record, ['Date_1']);
+      const table1Array = record.table1.value;
+      disable_field(record, [
+        'Destination',
+        'Purpose',
+        'DepartureDate',
+        'ReturnDate',
+        'Note',
+        'DeparturePlace',
+        'table1',
+      ]);
+
+      document.querySelector('.subtable-row-label-text-gaia').style.display =
+        'none';
+      document.querySelector('.edit-subtable-gaia').style.display = 'none';
+    } else {
+      document.querySelector('.subtable-row-label-text-gaia').style.display =
+        'block';
+      document.querySelector('.edit-subtable-gaia').style.display = 'block';
     }
+    return e;
   });
 })();

@@ -100,7 +100,6 @@ const getListRecord = new Promise((resolve, reject) => {
     },
     function (error) {
       reject();
-      console.log(error);
     }
   );
 });
@@ -126,7 +125,6 @@ const createRecord = (date) => {
     create,
     function (resp) {},
     function (error) {
-      console.log(error);
     }
   );
 };
@@ -137,18 +135,23 @@ const handleLinkApp = (record) => {
   let distanceTime =
     new Date(ReturnDate).getTime() - new Date(DepartureDate).getTime();
 
-  let distanceDays = distanceTime / (1000 * 3600 * 24) + 1;
+  let distanceDays = distanceTime / (1000 * 3600 * 24);
 
+  console.log('distanceDays', Math.floor(distanceDays));
+  console.log('DepartureDate', DepartureDate);
+  console.log('ReturnDate', ReturnDate);
   if (record?.Status?.value === '経費精算作成') {
     if (DepartureDate && ReturnDate) {
-      for (let i = 1; i <= distanceDays; i++) {
+      for (let i = 0; i <= distanceDays; i++) {
         let { date } = useGetDate(
           new Date(DepartureDate)?.getTime() + 1000 * 60 * 60 * 24 * i
         );
+        console.log(date);
         let isAlready = false;
         // check date have already
         getListRecord
           .then((recordList) => {
+
             for (const item of recordList) {
               if (date === item.working_date.value) {
                 isAlready = true;
@@ -159,7 +162,6 @@ const handleLinkApp = (record) => {
             if (isAlready === false) {
               // create record
               createRecord(date, '');
-              console.log('create');
             } else {
               // reset satus
               isAlready = true;
